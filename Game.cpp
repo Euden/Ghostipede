@@ -70,7 +70,7 @@ bool Game::init(const char* title, int xPos, int yPos, int height, int width, in
 	m_Grid = g;
 	m_Grid->GenerateGrid();
 	m_Grid->ClearGrid();
-	m_Grid->PlaceMushrooms(Shrooms, 15);
+	m_Grid->PlaceMushrooms(Shrooms, gNumOfShrooms);
 
 	//Test Centipede
 	int startX = gGameStrtAreaX;
@@ -78,6 +78,7 @@ bool Game::init(const char* title, int xPos, int yPos, int height, int width, in
 	Centipede c = Centipede();
 	c.load(startX, startY, gCellSize, gCellSize, "head");
 	c.Init();
+	c.SetMushrooms(Shrooms);
 	Centipedes.push_back(c);
 	return true;
 }

@@ -52,23 +52,56 @@ void Centipede::draw(SDL_Renderer* pRenderer)
 	}
 }
 
+void Centipede::SetMushrooms(std::vector<Mushroom>& shrooms)
+{
+	Mushrooms = shrooms;
+}
 
 void Centipede::update(Uint32 Ticks)
 {
 	int currentX = m_x;
 	int currentY = m_y;
 
+	SDL_Rect centipedeBounds = GameObject::GetBounds();
+	
+	for (std::vector<Mushroom>::iterator it = Mushrooms.begin(); it != Mushrooms.end(); ++it)
+	{
+		Mushroom m = *it;
+		SDL_Rect shroomBounds = m.GetBounds();
+
+		if (currentState == CSRight) {
+			SDL_Rect rightBounds = centipedeBounds;
+			rightBounds.x = rightBounds.x + gCellSize;
+			if (checkCollision(rightBounds, shroomBounds)) {
+				collision();
+				break;
+			}
+		}
+
+		// 4
+		if (currentState == CSLeft) {
+			SDL_Rect leftBounds = centipedeBounds;
+			leftBounds.x = leftBounds.x - gCellSize;
+			if (checkCollision(leftBounds, shroomBounds)) {
+				collision();
+				break;
+			}
+		}
+	}
+
+
+
 	switch (currentState) {
 	case CSRight:
 		// 1 
-		if (m_x + gCellSize >= gGameWidth - gCellSize) {
+		if (m_x + gCellSize >= gGameWidth + gCellSize) {
 
 			// 2
-			if (m_y - gCellSize  == gGameStartAreaY) {
+			if (m_y + gCellSize >= gGameHeight) {
 				previousState = CSUpLeft;
 				currentState = CSRight;
 			}
-			else if (m_y == gGameStartAreaY + gGameHeight - gCellSize) {
+			else if (m_y <= 0) {
 				// 3
 				previousState = CSDownRight;
 				currentState = CSRight;
@@ -95,15 +128,15 @@ void Centipede::update(Uint32 Ticks)
 
 		break;
 	case CSLeft:
-
+		std::cout << "CSLEFT" << std::endl;
 		// Check for a wall collision
-		if (m_x  == gGameStrtAreaX) {
+		if (m_x <= 0) {
 
-			if (m_y - gCellSize == gGameStartAreaY) {
+			if (m_y + gCellSize >= gGameHeight) {
 				previousState = CSUpRight;
 				currentState = CSLeft;
 			}
-			else if (m_y == gGameStartAreaY + gGameHeight) {
+			else if (m_y <= 0) {
 				// Top collision
 				previousState = CSDownLeft;
 				currentState = CSLeft;
@@ -128,8 +161,8 @@ void Centipede::update(Uint32 Ticks)
 		}
 
 		break;
-
 	case CSDownLeft:
+		std::cout << "CSDOWNLEFT" << std::endl;
 		// 1
 		if (moveCount == 0) {
 			currentPosY = m_y + gCellSize;
@@ -145,6 +178,7 @@ void Centipede::update(Uint32 Ticks)
 
 		break;
 	case CSDownRight:
+		std::cout << "CSDOWNRIGHT" << std::endl;
 		if (moveCount == 0) {
 			currentPosY = m_y + gCellSize;
 			moveCount++;
@@ -157,9 +191,10 @@ void Centipede::update(Uint32 Ticks)
 		}
 
 		break;
-		case CSUpRight:
+	case CSUpRight:
+		std::cout << "CSUPRIGHT" << std::endl;
 		if (moveCount == 0) {
-			currentPosY = m_y + gCellSize;
+			currentPosY = m_y - gCellSize;
 			moveCount++;
 		}
 		else {
@@ -171,9 +206,9 @@ void Centipede::update(Uint32 Ticks)
 
 		break;
 	case CSUpLeft:
-
+		std::cout << "CSUPLEFT" << std::endl;
 		if (moveCount == 0) {
-			currentPosY = m_y + gCellSize;
+			currentPosY = m_y - gCellSize;
 			moveCount++;
 		}
 		else {
@@ -191,12 +226,6 @@ void Centipede::update(Uint32 Ticks)
 	if (Ticks > UpdateMs)
 	{
 		UpdateMs += MS_PER_UPDATE;
-
-// 		if (PreviousPositions.size() > gCentipedeLength)
-// 		{
-// 			PreviousPositions.pop_back();
-// 		}
-// 		else
 		{
 			Vector2 v;
 			v.x = m_x;
@@ -219,7 +248,6 @@ void Centipede::update(Uint32 Ticks)
 			++i;
 		}
 	}
-	
 }
 
 
@@ -251,6 +279,51 @@ void Centipede::collision()
 			currentState = CSUpRight;
 		}
 	}
+}
+
+bool Centipede::checkCollision(SDL_Rect a, SDL_Rect b)
+{
+	//The sides of the rectangles
+	int leftA, leftB;
+	int rightA, rightB;
+	int topA, topB;
+	int bottomA, bottomB;
+
+	//Calculate the sides of rect A
+	leftA = a.x;
+	rightA = a.x + a.w;
+	topA = a.y;
+	bottomA = a.y + a.h;
+
+	//Calculate the sides of rect B
+	leftB = b.x;
+	rightB = b.x + b.w;
+	topB = b.y;
+	bottomB = b.y + b.h;
+
+	//If any of the sides from A are outside of B
+	if (bottomA <= topB)
+	{
+		return false;
+	}
+
+	if (topA >= bottomB)
+	{
+		return false;
+	}
+
+	if (rightA <= leftB)
+	{
+		return false;
+	}
+
+	if (leftA >= rightB)
+	{
+		return false;
+	}
+
+	//If none of the sides from A are outside B
+	return true;
 }
 
 void Centipede::clean()
