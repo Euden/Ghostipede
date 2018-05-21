@@ -12,7 +12,7 @@ public:
 	virtual void update(int x, int y, Uint32 Ticks);
 	virtual void clean();
 
-	//virtual SDL_Rect GetBounds() - Get the bounding box of this game object.
+	virtual SDL_Rect GetBounds();
 
 protected:
 

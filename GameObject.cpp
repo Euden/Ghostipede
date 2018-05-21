@@ -24,6 +24,17 @@ void GameObject::update(int x, int y, Uint32 Ticks)
 	m_y = y;
 }
 
+SDL_Rect GameObject::GetBounds()
+{
+	SDL_Rect bounds;
+	bounds.h = m_height;
+	bounds.w = m_width;
+	bounds.x = m_x;
+	bounds.y = m_y;
+
+	return bounds;
+}
+
 void GameObject::clean()
 {
 	TextureManager::Instance()->clean(m_textureID);

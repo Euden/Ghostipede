@@ -34,7 +34,7 @@ void Grid::PlaceMushrooms(std::vector<Mushroom> &p_Shrooms, int numToPlace)
 	{
 		Mushroom mushroom = Mushroom();
 		GridPoint newPoint = GetEmptyLocation();
-		mushroom.load(newPoint.x * gCellSize + gGameStrtAreaX, (gGameStartAreaY - gCellSize + 480) - newPoint.y * gCellSize - gCellSize/2 , gCellSize, gCellSize, "mushroom");
+		mushroom.load(newPoint.x * gCellSize , (480) - newPoint.y * gCellSize - gCellSize/2 , gCellSize, gCellSize, "mushroom");
 		p_Shrooms.push_back(mushroom);
 	}
 }

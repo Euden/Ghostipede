@@ -3,6 +3,7 @@
 
 #include "GameObject.h"
 #include "Segment.h"
+#include "Mushroom.h"
 #include <vector>
 #include <list>
 
@@ -33,7 +34,8 @@ public:
 	void clean();
 
 	void collision();
-
+	bool checkCollision(SDL_Rect a, SDL_Rect b);
+	void SetMushrooms(std::vector<Mushroom>& shrooms);
 	int currentPosX, currentPosY;
 
 private:
@@ -47,6 +49,7 @@ private:
 	uint32_t UpdateMs;
 
 	std::list<Vector2> PreviousPositions;
+	std::vector<Mushroom> Mushrooms;
 };
 
 #endif
