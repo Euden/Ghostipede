@@ -13,7 +13,8 @@ public:
 	void update();
 	void clean();
 
-	//void hit();
+	void hit();
 
+	int lives;;
 };
 #endif

@@ -53,11 +53,27 @@ bool Game::init(const char* title, int xPos, int yPos, int height, int width, in
 	{
 		return false;
 	}
+	if (!TheTextureManager::Instance()->load("data/Mushroom2.bmp", "mushroom1", m_pRenderer))
+	{
+		return false;
+	}
+	if (!TheTextureManager::Instance()->load("data/Mushroom3.bmp", "mushroom2", m_pRenderer))
+	{
+		return false;
+	}
+	if (!TheTextureManager::Instance()->load("data/Mushroom4.bmp", "mushroom3", m_pRenderer))
+	{
+		return false;
+	}
 	if (!TheTextureManager::Instance()->load("data/Head.bmp", "head", m_pRenderer))
 	{
 		return false;
 	}
 	if (!TheTextureManager::Instance()->load("data/Body.bmp", "segment", m_pRenderer))
+	{
+		return false;
+	}
+	if (!TheTextureManager::Instance()->load("data/Laser.bmp", "Bullet", m_pRenderer))
 	{
 		return false;
 	}
@@ -80,6 +96,9 @@ bool Game::init(const char* title, int xPos, int yPos, int height, int width, in
 	c.Init();
 	c.SetMushrooms(Shrooms);
 	Centipedes.push_back(c);
+
+	// Set player shrooms
+	m_Player.Shrooms = &Shrooms;
 	return true;
 }
 
@@ -123,9 +142,15 @@ void Game::handleEvents()
 			m_bRunning = false;
 			break;
 		case SDL_MOUSEMOTION:
-			m_Player.currentPosX = event.motion.x;
-			m_Player.currentPosY = event.motion.y;
+			m_Player.SetPosition(event.motion.x, event.motion.y);
 			break;
+		case SDL_KEYDOWN:
+			switch(event.key.keysym.sym)
+			{
+			case SDLK_SPACE:
+				m_Player.Fire();
+				break;
+			}
 		default:
 			break;
 		}

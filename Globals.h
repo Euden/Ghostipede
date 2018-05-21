@@ -10,6 +10,11 @@
 
 #define gNumOfShrooms 15
 
+// Bullets
+#define gBulletSpeed 1.0;
+#define gBulletMaxSpeed 10.0;
+#define gTotalBullets 20
+
 #define VIRTUAL_FRAMERATE 30.f /*fps*/
 #define MS_PER_UPDATE ( ( 1 / VIRTUAL_FRAMERATE ) * 1000 )
 

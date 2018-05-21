@@ -34,7 +34,6 @@ public:
 	void clean();
 
 	void collision();
-	bool checkCollision(SDL_Rect a, SDL_Rect b);
 	void SetMushrooms(std::vector<Mushroom>& shrooms);
 	int currentPosX, currentPosY;
 

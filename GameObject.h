@@ -13,6 +13,7 @@ public:
 	virtual void clean();
 
 	virtual SDL_Rect GetBounds();
+	virtual bool checkCollision(SDL_Rect a, SDL_Rect b);
 
 protected:
 
