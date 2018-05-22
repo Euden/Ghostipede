@@ -29,7 +29,10 @@ void Mushroom::draw(SDL_Renderer* pRenderer)
 	default:
 		break;
 	}
-	GameObject::draw(pRenderer);
+	if (lives > 0)
+	{
+		GameObject::draw(pRenderer);
+	}
 }
 
 void Mushroom::hit()
