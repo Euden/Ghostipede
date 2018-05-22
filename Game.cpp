@@ -93,12 +93,14 @@ bool Game::init(const char* title, int xPos, int yPos, int height, int width, in
 	int startY = gGameStartAreaY;
 	Centipede c = Centipede();
 	c.load(startX, startY, gCellSize, gCellSize, "head");
-	c.Init();
+	std::vector<Segment> s;
+	c.Init(s);
 	c.SetMushrooms(Shrooms);
 	Centipedes.push_back(c);
 
 	// Set player shrooms
 	m_Player.Shrooms = &Shrooms;
+	m_Player.m_Centipedes = &Centipedes;
 	return true;
 }
 
@@ -167,5 +169,30 @@ void Game::update(Uint32 Ticks)
 	for (std::vector<Centipede>::iterator it = Centipedes.begin(); it != Centipedes.end(); ++it)
 	{
 		it->update(Ticks);
+		if (it->shouldSplit)
+		{
+				// Create a new centipede. Set this segment to a mushroom. 
+				//Set the next one along in the array to be the new tail end of the centipede.
+				/*Mushroom m = Mushroom();
+				Segment* s = &it->GetSegments().at(it->segmentHitIndex);
+				Segment* nextSegment = &it->GetSegments().at(it->segmentHitIndex + 1);
+				if (nextSegment != nullptr)
+				{
+					Centipede newCentipede = Centipede();
+					newCentipede.load(nextSegment->m_CurrentPosX, nextSegment->m_CurrentPosY, gCellSize, gCellSize, "head");
+
+					
+
+					newCentipede.Init();
+					newCentipede.SetMushrooms(Shrooms);
+					Centipedes.push_back(c);
+
+				}
+				int posX = s->m_CurrentPosX;
+				int posY = s->m_CurrentPosY);
+				m.load(posX, posY, gCellSize, gCellSize, "mushroom");
+				Shrooms.push_back(m);*/
+
+		}
 	}
 }

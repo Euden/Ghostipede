@@ -3,6 +3,7 @@
 
 #include "GameObject.h"
 #include "Mushroom.h"
+#include "Centipede.h"
 #include <vector>
 
 class Bullet : public GameObject
@@ -20,6 +21,7 @@ public:
 	int currentPosX, currentPosY;
 
 	std::vector<Mushroom>* Shrooms;
+	std::vector<Centipede>* m_Centipedes;
 };
 
 #endif

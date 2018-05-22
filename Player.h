@@ -3,6 +3,7 @@
 
 #include "GameObject.h"
 #include "Bullet.h"
+#include "Centipede.h"
 #include <iostream>
 #include <vector>
 
@@ -22,5 +23,6 @@ public:
 	bool bHasFired = false;
 	Bullet* currentBullet = nullptr;
 	std::vector<Mushroom>* Shrooms;
+	std::vector<Centipede>* m_Centipedes;
 };
 #endif

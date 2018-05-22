@@ -27,7 +27,7 @@ class Centipede : public GameObject
 {
 public:
 
-	void Init();
+	void Init(std::vector<Segment>& tailSegments);
 	void load(int x, int y, int width, int height, std::string textureID);
 	void draw(SDL_Renderer* pRenderer);
 	void update(Uint32 Ticks);
@@ -37,6 +37,11 @@ public:
 	void SetMushrooms(std::vector<Mushroom>& shrooms);
 	int currentPosX, currentPosY;
 
+	std::vector<Segment>& GetSegments() { return segments; }
+
+	Segment* splitSegment = nullptr;
+	int segmentHitIndex = 0;
+	bool shouldSplit = false;
 private:
 	std::vector<Segment> segments;
 	CentipedeState currentState;
