@@ -48,7 +48,7 @@ private:
 	uint32_t UpdateMs;
 
 	std::list<Vector2> PreviousPositions;
-	std::vector<Mushroom> Mushrooms;
+	std::vector<Mushroom>* Mushrooms;
 };
 
 #endif

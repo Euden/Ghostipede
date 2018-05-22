@@ -26,14 +26,13 @@ void Bullet::update(Uint32 Ticks)
 	// Check for collision with a shroom
 	for (std::vector<Mushroom>::iterator it = Shrooms->begin(); it != Shrooms->end(); ++it)
 	{
-		Mushroom m = *it;
-		const SDL_Rect shroomBounds = m.GetBounds();
+		const SDL_Rect shroomBounds = it->GetBounds();
 		const SDL_Rect currentBounds = GameObject::GetBounds();
 		if (GameObject::checkCollision(currentBounds, shroomBounds))
 		{
-			if (m.lives > 0)
+			if (it->lives > 0)
 			{
-				m.hit();
+				it->hit();
 				isDirty = true;
 			}
 		}

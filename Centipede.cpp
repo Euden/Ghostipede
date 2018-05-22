@@ -54,7 +54,7 @@ void Centipede::draw(SDL_Renderer* pRenderer)
 
 void Centipede::SetMushrooms(std::vector<Mushroom>& shrooms)
 {
-	Mushrooms = shrooms;
+	Mushrooms = &shrooms;
 }
 
 void Centipede::update(Uint32 Ticks)
@@ -64,32 +64,35 @@ void Centipede::update(Uint32 Ticks)
 
 	SDL_Rect centipedeBounds = GameObject::GetBounds();
 	
-	for (std::vector<Mushroom>::iterator it = Mushrooms.begin(); it != Mushrooms.end(); ++it)
+	for (std::vector<Mushroom>::iterator it = Mushrooms->begin(); it != Mushrooms->end(); ++it)
 	{
-		Mushroom m = *it;
-		SDL_Rect shroomBounds = m.GetBounds();
+			SDL_Rect shroomBounds = it->GetBounds();
 
-		if (currentState == CSRight) {
-			SDL_Rect rightBounds = centipedeBounds;
-			rightBounds.x = rightBounds.x + gCellSize;
-			if (GameObject::checkCollision(rightBounds, shroomBounds)) {
-				collision();
-				break;
+			if (currentState == CSRight) {
+				SDL_Rect rightBounds = centipedeBounds;
+				rightBounds.x = rightBounds.x + gCellSize;
+				if (GameObject::checkCollision(rightBounds, shroomBounds)) {
+					if (it->lives > 0)
+					{
+						collision();
+					}
+					break;
+				}
 			}
-		}
 
-		// 4
-		if (currentState == CSLeft) {
-			SDL_Rect leftBounds = centipedeBounds;
-			leftBounds.x = leftBounds.x - gCellSize;
-			if (GameObject::checkCollision(leftBounds, shroomBounds)) {
-				collision();
-				break;
+			// 4
+			if (currentState == CSLeft) {
+				SDL_Rect leftBounds = centipedeBounds;
+				leftBounds.x = leftBounds.x - gCellSize;
+				if (GameObject::checkCollision(leftBounds, shroomBounds)) {
+					if (it->lives > 0)
+					{
+						collision();
+					}
+					break;
+				}
 			}
-		}
 	}
-
-
 
 	switch (currentState) {
 	case CSRight:
