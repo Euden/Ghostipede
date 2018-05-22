@@ -3,22 +3,25 @@
 #include <SDL.h>
 #include <iostream>
 
-void Centipede::Init()
+void Centipede::Init(std::vector<Segment>& tailSegments)
 {
 	currentState = CSRight;
 	previousState = CSDownRight;
 	moveCount = 0;
 	UpdateMs = MS_PER_UPDATE;
+
+	/*if (tailSegments.size > 0)
+	{
+		segments = tailSegments;
+	}*/
+	//else 
 	if (gCentipedeLength > 0)
 	{
 		for (int i = 0; i < gCentipedeLength; ++i)
 		{
 			Segment segment = Segment();
-
 			segments.push_back(segment);
 		}
-
-		Segment* parentSegment = &(segments[0]);
 
 		for (std::vector<Segment>::iterator it = segments.begin(); it != segments.end(); ++it)
 		{

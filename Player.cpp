@@ -48,6 +48,7 @@ void Player::Fire()
 		currentBullet->load(currentPosX, currentPosY, 1, gCellSize, "Bullet");
 		currentBullet->SetPosition(currentPosX, currentPosY);
 		currentBullet->Shrooms = Shrooms;
+		currentBullet->m_Centipedes = m_Centipedes;
 	}
 	
 }
