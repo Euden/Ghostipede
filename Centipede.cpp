@@ -1,5 +1,6 @@
 #include "Centipede.h"
 #include "Globals.h"
+#include "Game.h"
 #include <SDL.h>
 #include <iostream>
 
@@ -9,32 +10,38 @@ void Centipede::Init(std::vector<Segment>& tailSegments)
 	previousState = CSDownRight;
 	moveCount = 0;
 	UpdateMs = MS_PER_UPDATE;
-
-	/*if (tailSegments.size > 0)
+	shouldDie = false;
+	if (tailSegments.size() > 0)
 	{
 		segments = tailSegments;
-	}*/
-	//else 
-	if (gCentipedeLength > 0)
+	}
+	else if (gCentipedeLength > 0)
 	{
 		for (int i = 0; i < gCentipedeLength; ++i)
 		{
 			Segment segment = Segment();
 			segments.push_back(segment);
 		}
-
-		for (std::vector<Segment>::iterator it = segments.begin(); it != segments.end(); ++it)
-		{
-			it->load(m_x + gCellSize, m_y, gCellSize, gCellSize, "segment");
-			it->SetPosition(m_x + gCellSize, m_y);
-
-			Vector2 v;
-			v.x = m_x;
-			v.y = m_y;
-
-			PreviousPositions.emplace_front(v);
-		}
 	}
+
+	for (std::vector<Segment>::iterator it = segments.begin(); it != segments.end(); ++it)
+	{
+		it->load(m_x + gCellSize, m_y, gCellSize, gCellSize, "segment");
+		it->SetPosition(m_x + gCellSize, m_y);
+
+		Vector2 v;
+		v.x = m_x;
+		v.y = m_y;
+
+		PreviousPositions.emplace_front(v);
+	}
+}
+
+void Centipede::Init(std::vector<Segment>& tailSegments, uint32_t GameTimeMs)
+{
+	Init(tailSegments);
+	UpdateMs = GameTimeMs;
+	shouldDie = false;
 }
 
 void Centipede::load(int x, int y, int width, int height, std::string textureID)
@@ -46,6 +53,11 @@ void Centipede::load(int x, int y, int width, int height, std::string textureID)
 
 void Centipede::draw(SDL_Renderer* pRenderer)
 {
+	if (shouldDie == true)
+	{
+		return;
+	}
+
 	// Only draw what stage we are.
 	GameObject::draw(pRenderer);
 
@@ -62,6 +74,7 @@ void Centipede::SetMushrooms(std::vector<Mushroom>& shrooms)
 
 void Centipede::update(Uint32 Ticks)
 {
+
 	int currentX = m_x;
 	int currentY = m_y;
 
@@ -240,7 +253,7 @@ void Centipede::update(Uint32 Ticks)
 		int i = 0;
 		for (std::list<Vector2>::iterator it = PreviousPositions.begin(); it != PreviousPositions.end(); ++it)
 		{
-			if (i < gCentipedeLength)
+			if (i < segments.size())
 			{
 				segments[i].SetPosition(it->x, it->y);
 

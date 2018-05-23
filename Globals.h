@@ -1,7 +1,7 @@
 #ifndef _GLOBALS_H_
 #define _GLOBALS_H_
 
-#define gCentipedeLength 6
+#define gCentipedeLength 16
 #define gCellSize 16
 #define gGameStrtAreaX 16
 #define gGameStartAreaY 64
@@ -15,7 +15,7 @@
 #define gBulletMaxSpeed 10.0;
 #define gTotalBullets 20
 
-#define VIRTUAL_FRAMERATE 30.f /*fps*/
+#define VIRTUAL_FRAMERATE 10.0 /*fps*/
 #define MS_PER_UPDATE ( ( 1 / VIRTUAL_FRAMERATE ) * 1000 )
 
 

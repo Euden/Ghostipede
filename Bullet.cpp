@@ -48,9 +48,14 @@ void Bullet::update(Uint32 Ticks)
 		for (std::vector<Segment>::iterator s_it = c_it->GetSegments().begin(); s_it != c_it->GetSegments().end(); ++s_it)
 		{
 			const SDL_Rect segmentBounds = s_it->GetBounds();
-			// sort out catepillar bounds
+			const SDL_Rect centipedeBounds = c_it->GetBounds();
 			const SDL_Rect currentBounds = GameObject::GetBounds();
-			if (GameObject::checkCollision(currentBounds, segmentBounds))
+			if (GameObject::checkCollision(currentBounds, centipedeBounds) && !c_it->shouldDie)
+			{
+				c_it->shouldDie = true;
+				break;
+			}
+			else if (GameObject::checkCollision(currentBounds, segmentBounds))
 			{
 				isDirty = true;
 				hitCentipede = &(*c_it);
@@ -58,6 +63,7 @@ void Bullet::update(Uint32 Ticks)
 				c_it->segmentHitIndex = hitSegmentNum;
 				break;
 			}
+			
 			++hitSegmentNum;
 		}
 	}

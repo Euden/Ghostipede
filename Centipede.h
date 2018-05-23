@@ -28,6 +28,7 @@ class Centipede : public GameObject
 public:
 
 	void Init(std::vector<Segment>& tailSegments);
+	void Init(std::vector<Segment>& tailSegments, uint32_t GameTimeMs);
 	void load(int x, int y, int width, int height, std::string textureID);
 	void draw(SDL_Renderer* pRenderer);
 	void update(Uint32 Ticks);
@@ -42,6 +43,8 @@ public:
 	Segment* splitSegment = nullptr;
 	int segmentHitIndex = 0;
 	bool shouldSplit = false;
+	bool shouldDie = false;
+	uint32_t UpdateMs;
 private:
 	std::vector<Segment> segments;
 	CentipedeState currentState;
@@ -50,7 +53,6 @@ private:
 	// time.
 	int moveCount;
 	int level;
-	uint32_t UpdateMs;
 
 	std::list<Vector2> PreviousPositions;
 	std::vector<Mushroom>* Mushrooms;

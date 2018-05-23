@@ -166,33 +166,49 @@ void Game::update(Uint32 Ticks)
 	
 
 	m_Player.update(Ticks);
+
+	Centipede* toSplitCheck = nullptr;
 	for (std::vector<Centipede>::iterator it = Centipedes.begin(); it != Centipedes.end(); ++it)
 	{
 		it->update(Ticks);
 		if (it->shouldSplit)
 		{
+			if ((it->segmentHitIndex < it->GetSegments().size() - 1))
+			{
 				// Create a new centipede. Set this segment to a mushroom. 
 				//Set the next one along in the array to be the new tail end of the centipede.
-				/*Mushroom m = Mushroom();
+				//Mushroom m = Mushroom();
 				Segment* s = &it->GetSegments().at(it->segmentHitIndex);
-				Segment* nextSegment = &it->GetSegments().at(it->segmentHitIndex + 1);
-				if (nextSegment != nullptr)
+				//Segment* nextSegment = &it->GetSegments().at(it->segmentHitIndex + 1);
+				if (s != nullptr)
 				{
-					Centipede newCentipede = Centipede();
-					newCentipede.load(nextSegment->m_CurrentPosX, nextSegment->m_CurrentPosY, gCellSize, gCellSize, "head");
+					Centipede* newCentipede = new Centipede();
+					newCentipede->load(s->m_CurrentPosX, s->m_CurrentPosY, gCellSize, gCellSize, "head");
 
-					
+					std::vector<Segment> newSegments;
 
-					newCentipede.Init();
-					newCentipede.SetMushrooms(Shrooms);
-					Centipedes.push_back(c);
+					while (it->GetSegments().size() > it->segmentHitIndex)
+					{
+						newSegments.push_back(it->GetSegments().back());
+						it->GetSegments().pop_back();
+					}
 
+					newCentipede->Init(newSegments, it->UpdateMs);
+					newCentipede->SetMushrooms(Shrooms);
+					toSplitCheck = newCentipede;
+					it->shouldSplit = false;
 				}
-				int posX = s->m_CurrentPosX;
-				int posY = s->m_CurrentPosY);
-				m.load(posX, posY, gCellSize, gCellSize, "mushroom");
-				Shrooms.push_back(m);*/
-
+				else
+				{
+					it->GetSegments().pop_back();
+				}
+			}
 		}
+	}
+
+	if (toSplitCheck)
+	{
+		Centipedes.push_back(*toSplitCheck);
+		toSplitCheck = nullptr;
 	}
 }
