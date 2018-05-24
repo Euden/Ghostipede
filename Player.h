@@ -20,6 +20,7 @@ public:
 	void Fire();
 
 	int currentPosX, currentPosY;
+	int oldPosX, oldPosY;
 	bool bHasFired = false;
 	Bullet* currentBullet = nullptr;
 	std::vector<Mushroom>* Shrooms;

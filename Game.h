@@ -21,6 +21,9 @@ public:
 	void handleEvents();
 	void clean();
 
+	// Centipede specific functions
+	void RemoveDeadCentipedes();
+
 	bool running() { return m_bRunning; }
 
 

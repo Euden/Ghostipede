@@ -42,44 +42,23 @@ bool Game::init(const char* title, int xPos, int yPos, int height, int width, in
 	std::cout << "Running game..." << std::endl;
 	m_bRunning = true;
 
-	// Test loading textures
-	std::cout << "Running test load of texture" << std::endl;
+	// Load Textures
+	std::cout << "Loading Textures..." << std::endl;
 
-	if (!TheTextureManager::Instance()->load("data/Player.bmp", "player", m_pRenderer))
-	{
-		return false;
-	}
-	if (!TheTextureManager::Instance()->load("data/Mushroom1.bmp", "mushroom", m_pRenderer))
-	{
-		return false;
-	}
-	if (!TheTextureManager::Instance()->load("data/Mushroom2.bmp", "mushroom1", m_pRenderer))
-	{
-		return false;
-	}
-	if (!TheTextureManager::Instance()->load("data/Mushroom3.bmp", "mushroom2", m_pRenderer))
-	{
-		return false;
-	}
-	if (!TheTextureManager::Instance()->load("data/Mushroom4.bmp", "mushroom3", m_pRenderer))
-	{
-		return false;
-	}
-	if (!TheTextureManager::Instance()->load("data/Head.bmp", "head", m_pRenderer))
-	{
-		return false;
-	}
-	if (!TheTextureManager::Instance()->load("data/Body.bmp", "segment", m_pRenderer))
-	{
-		return false;
-	}
-	if (!TheTextureManager::Instance()->load("data/Laser.bmp", "Bullet", m_pRenderer))
+	if (!TheTextureManager::Instance()->load("data/Player.bmp", "player", m_pRenderer)
+		|| (!TheTextureManager::Instance()->load("data/Mushroom1.bmp", "mushroom", m_pRenderer))
+		|| (!TheTextureManager::Instance()->load("data/Mushroom2.bmp", "mushroom1", m_pRenderer))
+		|| (!TheTextureManager::Instance()->load("data/Mushroom3.bmp", "mushroom2", m_pRenderer))
+		|| (!TheTextureManager::Instance()->load("data/Mushroom4.bmp", "mushroom3", m_pRenderer))
+		|| (!TheTextureManager::Instance()->load("data/Head.bmp", "head", m_pRenderer))
+		|| (!TheTextureManager::Instance()->load("data/Body.bmp", "segment", m_pRenderer))
+		|| (!TheTextureManager::Instance()->load("data/Laser.bmp", "Bullet", m_pRenderer)))
 	{
 		return false;
 	}
 
-	// Test game object classes
-	m_Player.load(0, 0, 16, 16, "player");
+	// Load Player
+	m_Player.load(gGameStrtAreaX, gGameStartAreaY, gCellSize, gCellSize, "player");
 
 	// Test grid
 	Grid* g = new Grid(30, 30);
@@ -88,9 +67,9 @@ bool Game::init(const char* title, int xPos, int yPos, int height, int width, in
 	m_Grid->ClearGrid();
 	m_Grid->PlaceMushrooms(Shrooms, gNumOfShrooms);
 
-	//Test Centipede
-	int startX = gGameStrtAreaX;
-	int startY = gGameStartAreaY;
+	//Create First Centipede
+	int startX = gGameWidth;;
+	int startY = 0;
 	Centipede c = Centipede();
 	c.load(startX, startY, gCellSize, gCellSize, "head");
 	std::vector<Segment> s;
@@ -111,7 +90,7 @@ void Game::render()
 	//render the gameObjects
 
 	m_Player.draw(m_pRenderer);
-	for (int i = 0; i < 15; ++i)
+	for (int i = 0; i < Shrooms.size(); ++i)
 	{
 		Shrooms[i].draw(m_pRenderer);
 	}
@@ -163,28 +142,34 @@ void Game::update(Uint32 Ticks)
 {
 	// update player objects
 
-	
-
 	m_Player.update(Ticks);
 
 	Centipede* toSplitCheck = nullptr;
 	for (std::vector<Centipede>::iterator it = Centipedes.begin(); it != Centipedes.end(); ++it)
 	{
+		if (it->isDead)
+		{
+			continue;
+		}
+
 		it->update(Ticks);
 		if (it->shouldSplit)
 		{
-			if ((it->segmentHitIndex < it->GetSegments().size() - 1))
+			if (it->segmentHitIndex < (it->GetSegments().size() - 1))
 			{
+
 				// Create a new centipede. Set this segment to a mushroom. 
 				//Set the next one along in the array to be the new tail end of the centipede.
-				//Mushroom m = Mushroom();
+				Mushroom* m = new Mushroom();
 				Segment* s = &it->GetSegments().at(it->segmentHitIndex);
-				//Segment* nextSegment = &it->GetSegments().at(it->segmentHitIndex + 1);
-				if (s != nullptr)
+				Segment* sNext = &it->GetSegments().at(it->segmentHitIndex + 1);
+				if (sNext != nullptr)
 				{
+					m->load(sNext->m_CurrentPosX, sNext->m_CurrentPosY, gCellSize, gCellSize, "mushroom");
+					Shrooms.push_back(*m);
 					Centipede* newCentipede = new Centipede();
-					newCentipede->load(s->m_CurrentPosX, s->m_CurrentPosY, gCellSize, gCellSize, "head");
-
+					newCentipede->load(sNext->m_CurrentPosX, sNext->m_CurrentPosY, gCellSize, gCellSize, "head");
+					newCentipede->centipedeIndex = Centipedes.size() - 1;
 					std::vector<Segment> newSegments;
 
 					while (it->GetSegments().size() > it->segmentHitIndex)
@@ -197,6 +182,35 @@ void Game::update(Uint32 Ticks)
 					newCentipede->SetMushrooms(Shrooms);
 					toSplitCheck = newCentipede;
 					it->shouldSplit = false;
+					it->segmentHitIndex = 0;
+					// Set up direction
+					if (toSplitCheck->currentState == CSRight ||
+						toSplitCheck->previousState == CSRight) {
+						// Was heading right
+						if (toSplitCheck->currentState == CSDownLeft ||
+							toSplitCheck->currentState == CSDownRight) {
+							// Is heading down
+							toSplitCheck->previousState = CSUpRight;
+						}
+						else {
+							// Is heading up
+							toSplitCheck->previousState = CSDownRight;
+						}
+						toSplitCheck->currentState = CSLeft;
+					}
+					else {
+						// Was heading left
+						if (toSplitCheck->currentState == CSDownLeft ||
+							toSplitCheck->currentState == CSDownRight) {
+							// Is heading down
+							toSplitCheck->previousState = CSUpRight;
+						}
+						else {
+							// Is heading up
+							toSplitCheck->previousState = CSDownRight;
+						}
+						toSplitCheck->currentState = CSRight;
+					}
 				}
 				else
 				{
@@ -211,4 +225,11 @@ void Game::update(Uint32 Ticks)
 		Centipedes.push_back(*toSplitCheck);
 		toSplitCheck = nullptr;
 	}
+
+	RemoveDeadCentipedes();
+}
+
+void Game::RemoveDeadCentipedes()
+{
+	// TODO.
 }

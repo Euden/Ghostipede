@@ -22,6 +22,7 @@ void Bullet::update(Uint32 Ticks)
 	if (currentPosY < 0)
 	{
 		isDirty = true;
+		return;
 	}
 
 	// Check for collision with a shroom
@@ -50,9 +51,10 @@ void Bullet::update(Uint32 Ticks)
 			const SDL_Rect segmentBounds = s_it->GetBounds();
 			const SDL_Rect centipedeBounds = c_it->GetBounds();
 			const SDL_Rect currentBounds = GameObject::GetBounds();
-			if (GameObject::checkCollision(currentBounds, centipedeBounds) && !c_it->shouldDie)
+			if (GameObject::checkCollision(currentBounds, centipedeBounds) && !c_it->isDead)
 			{
-				c_it->shouldDie = true;
+				c_it->isDead = true;
+				isDirty = true;
 				break;
 			}
 			else if (GameObject::checkCollision(currentBounds, segmentBounds))

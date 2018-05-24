@@ -4,13 +4,21 @@
 #include <SDL.h>
 #include <iostream>
 
+/*
+* Centipede Class
+* Description: Derived from gameobject the centipede shall move 16 pixels in a direction
+* and change direction if it collides with a mushroom. The centipede contains an array of n segments
+* as defined by the cCentipedeLength or the tailSegments passed in.
+*
+*/
 void Centipede::Init(std::vector<Segment>& tailSegments)
 {
-	currentState = CSRight;
-	previousState = CSDownRight;
+	currentState = CSLeft;
+	previousState = CSDownLeft;
 	moveCount = 0;
 	UpdateMs = MS_PER_UPDATE;
-	shouldDie = false;
+	isDead = false;
+
 	if (tailSegments.size() > 0)
 	{
 		segments = tailSegments;
@@ -41,19 +49,17 @@ void Centipede::Init(std::vector<Segment>& tailSegments, uint32_t GameTimeMs)
 {
 	Init(tailSegments);
 	UpdateMs = GameTimeMs;
-	shouldDie = false;
+	isDead = false;
 }
 
 void Centipede::load(int x, int y, int width, int height, std::string textureID)
 {
-	// Load segments of the centipede.
-
 	GameObject::load(x, y, width, height, textureID);
 }
 
 void Centipede::draw(SDL_Renderer* pRenderer)
 {
-	if (shouldDie == true)
+	if (isDead)
 	{
 		return;
 	}
@@ -74,6 +80,11 @@ void Centipede::SetMushrooms(std::vector<Mushroom>& shrooms)
 
 void Centipede::update(Uint32 Ticks)
 {
+	if (isDead)
+	{
+		segments.clear();
+		return;
+	}
 
 	int currentX = m_x;
 	int currentY = m_y;

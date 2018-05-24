@@ -41,14 +41,19 @@ public:
 	std::vector<Segment>& GetSegments() { return segments; }
 
 	Segment* splitSegment = nullptr;
+	Segment* headSegment = nullptr;
+
 	int segmentHitIndex = 0;
 	bool shouldSplit = false;
-	bool shouldDie = false;
+	bool isDead = false;
+	int centipedeIndex = 0;
 	uint32_t UpdateMs;
-private:
-	std::vector<Segment> segments;
+
 	CentipedeState currentState;
 	CentipedeState previousState;
+private:
+	std::vector<Segment> segments;
+	
 
 	// time.
 	int moveCount;
