@@ -36,6 +36,9 @@ public:
 
 	void collision();
 	void SetMushrooms(std::vector<Mushroom>& shrooms);
+
+	void RemoveDeadSegments();
+
 	int currentPosX, currentPosY;
 
 	std::vector<Segment>& GetSegments() { return segments; }
@@ -43,7 +46,7 @@ public:
 	Segment* splitSegment = nullptr;
 	Segment* headSegment = nullptr;
 
-	int segmentHitIndex = 0;
+	int segmentHitIndex = -1;
 	bool shouldSplit = false;
 	bool isDead = false;
 	int centipedeIndex = 0;

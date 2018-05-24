@@ -14,7 +14,7 @@ public:
 
 	int m_PrevX, m_PrevY;
 	int m_CurrentPosX, m_CurrentPosY;
-	Segment* m_Parent;
+	bool isDead = false;
 };
 #endif // ! _SEGMENT_H_
 

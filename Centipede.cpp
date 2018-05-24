@@ -308,5 +308,24 @@ void Centipede::collision()
 
 void Centipede::clean()
 {
-	GameObject::clean();
+	segments.empty();
+	PreviousPositions.empty();
+	currentPosX = 0;
+	currentPosY = 0;
+
+	segmentHitIndex = 0;
+	// Dont use standard cleanup, this will remove textures.
+	//GameObject::clean();
+}
+
+void Centipede::RemoveDeadSegments()
+{
+	if (segmentHitIndex >= 0)
+	{
+		std::vector<Segment>::iterator it = segments.begin();
+		std::advance(it, segmentHitIndex);
+		segments.erase(it);
+
+		segmentHitIndex = -1;
+	}
 }

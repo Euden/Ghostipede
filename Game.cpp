@@ -152,21 +152,25 @@ void Game::update(Uint32 Ticks)
 			continue;
 		}
 
-		it->update(Ticks);
 		if (it->shouldSplit)
 		{
+			
+
+			// Create a new centipede. Set this segment to a mushroom. 
+			//Set the next one along in the array to be the new tail end of the centipede.
+			
+			Segment* s = &it->GetSegments().at(it->segmentHitIndex);
+
+			Mushroom* m = new Mushroom();
+			m->load(s->m_CurrentPosX, s->m_CurrentPosY, gCellSize, gCellSize, "mushroom");
+			Shrooms.push_back(*m);
+
 			if (it->segmentHitIndex < (it->GetSegments().size() - 1))
 			{
-
-				// Create a new centipede. Set this segment to a mushroom. 
-				//Set the next one along in the array to be the new tail end of the centipede.
-				Mushroom* m = new Mushroom();
-				Segment* s = &it->GetSegments().at(it->segmentHitIndex);
 				Segment* sNext = &it->GetSegments().at(it->segmentHitIndex + 1);
 				if (sNext != nullptr)
 				{
-					m->load(sNext->m_CurrentPosX, sNext->m_CurrentPosY, gCellSize, gCellSize, "mushroom");
-					Shrooms.push_back(*m);
+					
 					Centipede* newCentipede = new Centipede();
 					newCentipede->load(sNext->m_CurrentPosX, sNext->m_CurrentPosY, gCellSize, gCellSize, "head");
 					newCentipede->centipedeIndex = Centipedes.size() - 1;
@@ -181,6 +185,8 @@ void Game::update(Uint32 Ticks)
 					newCentipede->Init(newSegments, it->UpdateMs);
 					newCentipede->SetMushrooms(Shrooms);
 					toSplitCheck = newCentipede;
+
+
 					it->shouldSplit = false;
 					it->segmentHitIndex = 0;
 					// Set up direction
@@ -214,10 +220,12 @@ void Game::update(Uint32 Ticks)
 				}
 				else
 				{
-					it->GetSegments().pop_back();
+					it->RemoveDeadSegments();
 				}
 			}
 		}
+		it->update(Ticks);
+		
 	}
 
 	if (toSplitCheck)
@@ -231,5 +239,21 @@ void Game::update(Uint32 Ticks)
 
 void Game::RemoveDeadCentipedes()
 {
-	// TODO.
+	std::vector<int> deadCentipedeIndexes;
+	for (int i = 0; i < Centipedes.size(); ++i)
+	{
+		if (Centipedes[i].isDead)
+		{
+			Centipedes[i].clean();
+			deadCentipedeIndexes.push_back(i);
+		}
+	}
+
+	
+	for (int i = deadCentipedeIndexes.size() - 1; i > 0; --i)
+	{
+		std::vector<Centipede>::iterator centIT = Centipedes.begin();
+		std::advance(centIT, deadCentipedeIndexes[i]);
+		Centipedes.erase(centIT);
+	}
 }

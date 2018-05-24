@@ -46,34 +46,39 @@ void Bullet::update(Uint32 Ticks)
 	int hitSegmentNum = 0;
 	for (std::vector<Centipede>::iterator c_it = m_Centipedes->begin(); c_it != m_Centipedes->end(); ++c_it)
 	{
-		for (std::vector<Segment>::iterator s_it = c_it->GetSegments().begin(); s_it != c_it->GetSegments().end(); ++s_it)
+		if (!c_it->isDead)
 		{
-			const SDL_Rect segmentBounds = s_it->GetBounds();
-			const SDL_Rect centipedeBounds = c_it->GetBounds();
-			const SDL_Rect currentBounds = GameObject::GetBounds();
-			if (GameObject::checkCollision(currentBounds, centipedeBounds) && !c_it->isDead)
+			for (std::vector<Segment>::iterator s_it = c_it->GetSegments().begin(); s_it != c_it->GetSegments().end(); ++s_it)
 			{
-				c_it->isDead = true;
-				isDirty = true;
-				break;
+				const SDL_Rect segmentBounds = s_it->GetBounds();
+				const SDL_Rect centipedeBounds = c_it->GetBounds();
+				const SDL_Rect currentBounds = GameObject::GetBounds();
+				if (GameObject::checkCollision(currentBounds, centipedeBounds))
+				{
+					c_it->isDead = true;
+					isDirty = true;
+					break;
+				}
+				else if (GameObject::checkCollision(currentBounds, segmentBounds))
+				{
+					isDirty = true;
+					hitCentipede = &(*c_it);
+					hitSegment = &(*s_it);
+					c_it->segmentHitIndex = hitSegmentNum;
+					break;
+				}
+
+				++hitSegmentNum;
 			}
-			else if (GameObject::checkCollision(currentBounds, segmentBounds))
-			{
-				isDirty = true;
-				hitCentipede = &(*c_it);
-				hitSegment = &(*s_it);
-				c_it->segmentHitIndex = hitSegmentNum;
-				break;
-			}
-			
-			++hitSegmentNum;
 		}
+		
 	}
 
 	if (hitCentipede != nullptr && hitSegment != nullptr)
 	{
 		hitCentipede->shouldSplit = true;
 		hitCentipede->splitSegment = hitSegment;
+		hitSegment->isDead = true;
 	}
 }
 
